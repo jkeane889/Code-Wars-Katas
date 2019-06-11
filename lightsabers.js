@@ -17,3 +17,13 @@ function howManyLightsabersDoYouOwn(name) {
     return 0
   }
 }
+
+/*
+
+Best Practice:
+
+function howManyLightsabersDoYouOwn(name) {
+  return name === "Zach" ? 18 : 0 ;
+}
+
+*/
