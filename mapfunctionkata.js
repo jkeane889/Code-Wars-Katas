@@ -19,3 +19,13 @@ function maps(x){
 
   return newMap
 }
+
+/*
+
+Best Practice:
+
+function maps(x){
+  return x.map(n => n * 2);
+}
+
+*/
