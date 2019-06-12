@@ -24,6 +24,8 @@ function divisibleByThree(str){
 
 /* Best Practice:
 
-
+function divisibleByThree(str){
+    return str.split('').reduce((a,b) => parseInt(a) + parseInt(b)) % 3 === 0
+  }
 
 */
