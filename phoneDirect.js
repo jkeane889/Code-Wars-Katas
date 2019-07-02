@@ -29,27 +29,94 @@ return: "Error => Not found: nb"
 
 You can see other examples in the test cases.
 
-JavaScript random tests completed by @matt c
-
-Note
-Codewars stdout doesn't print part of a string when between < and >
-
 */
 
-//return the total number of smiling faces in the array
+
 function phone(string, num) {
-  var name = "";
-  var address = "";
+  var contacts = [];
   var str_arr = string.split("\n");
-  var contact = [];
 
   str_arr.forEach(function(elem) {
-    var teleRegex = /\+(\d{1|2}.\-\d{3}.\-\d{3}.\-\d{4})/
-    if (teleRegex.test(elem)) {
-      var phone = teleRegex.exec(elem);
-      contact.push(phone);
+    var nameInfo = nameFind(elem);
+    var phoneInfo = phoneFind(elem);
+    var addressInfo = addressFind(elem);
+    contacts.push([nameInfo, phoneInfo, addressInfo]);
+  });
+
+  var verified = 0;
+  var count = 0;
+  var contact = [];
+
+  contacts.forEach(function(ele) {
+    if (ele.includes(num)) {
+      count += 1;
+      verified += 1;
     };
   });
+
+  if (count > 1) {
+    return "Error => Too many people: " + num.toString();
+  };
+
+  if (verified != 1) {
+    return "Error => Not found: " + num.toString();
+  }
+
+  contacts.forEach(function(ele) {
+    if (ele.includes(num)) {
+      var phoneStr = "Phone => " + ele[1].toString();
+      var nameStr = "Name => " + ele[0].toString();
+      var addressStr = "Address => " + ele[2].toString();
+      contact.push(phoneStr, nameStr, addressStr)
+    };
+  });
+
+  return contact.join(", ")
+};
+
+function addressFind(element) {
+  var elem_1 = element.replace(/\W{1,2}(\d{1,2}\-\d{3}\-\d{3}\-\d{4})/, "");
+  var elem_2 = elem_1.replace(/^\<\w*\>|\<\w*\s\w*\>|\<\w*\s\w*\s\w*\>|\<\w*\s\w\W|\w*\w*\>/g, "");
+  console.log(elem_2)
+
+  elem_2 = elem_2.replace(/[^a-zA-Z0-9.-]/g, " ")
+  elem_2 = elem_2.replace(/\s{2,}/g,' ');
+
+  return elem_2.trim();
+};
+
+function phoneFind(element) {
+  var phoneNum = "";
+  var elems_split = element.split(" ");
+
+  elems_split.forEach(function (item) {
+    var teleRegex = /^\W{1,2}(\d{1,2}\-\d{3}\-\d{3}\-\d{4})\W*/;
+    if (teleRegex.test(item)) {
+      phoneNum += item;
+    };
+  });
+
+  var i = 0;
+  var final_num = ""
+
+  while (i < phoneNum.length) {
+    var integers = "0123456789-";
+    var end = phoneNum.length;
+    if (!integers.includes(phoneNum[i])) {
+      i += 1;
+    } else {
+      final_num += phoneNum[i];
+      i += 1;
+    };
+  };
+
+  return final_num;
+};
+
+function nameFind(element) {
+  var pos_1 = element.indexOf("<");
+  var pos_2 = element.indexOf(">");
+  var contact = element.slice(pos_1 + 1, pos_2);
 
   return contact;
 };
@@ -66,7 +133,7 @@ const dr = "/+1-541-754-3010 156 Alphand_St. <J Steeve>\n 133, Green, Rd. <E Kus
 + "+1-099-500-8000 <Peter Crush> Labrador Bd.\n +1-931-512-4855 <William Saurin> Bison Street CQ-23071\n"
 + "<P Salinge> Main Street, +1-098-512-2222, Denve\n"
 
-console.log(phone(dr, "48-421-674-8974"));
+console.log(phone(dr, "1-541-914-3010"));
 // console.log(phone(dr, "1-921-512-2222"));
 // console.log(phone(dr, "1-908-512-2222"));
 // console.log(phone(dr, "1-908-512-2222"));
