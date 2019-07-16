@@ -37,60 +37,22 @@ dim( 3,2,rnd ) // => (depends on results of rnd)
   // eg: [[0,1],[2,1],[0,0]]
 
 */
-function dim() {
-  var args = Array.from(arguments);
-  var val = args.pop();
-  var d1 = args.pop();
-  var xDarr = [];
 
-  for (var x = 0; x < d1; x++) {
-    if (typeof val == 'function') {
-      xDarr.push(val());
-    } else {
-      xDarr.push(val);
-    };
-  };
+// SOLUTION: Credit to "cave.on," "dubdjon!" via CodeWars
 
-  if (args.length >= 1) {
-    var reversedArg = args.reverse();
-    return getMatrix(reversedArg, xDarr);
-  } else {
+function dim(...args) {
+  var res, next;
 
-    return xDarr;
-  };
-};
+  if (args.length == 1)
+    return typeof args[0] === 'function'
+         ? args[0]()
+         : args[0];
 
-function getMatrix(arr, item) {
-  var dimArr = item;
+  res = [];
+  next = args.slice(1);
 
-  console.log("Original dimArr: ", dimArr)
+  for (var i = 0; i < args[0]; i++)
+    res.push(dim(...next));
 
-  for (var i = 0; i < arr.length; i++) {
-    var finalMatrix = [];
-    console.log(arr[i])
-    genMatrix(arr[i]);
-    dimArr = finalMatrix;
-
-    function genMatrix(num) {
-      if (num === 1) {
-        return dimArr;
-      } else {
-        return finalMatrix.push(dimArr, genMatrix(num - 1))
-      };
-    };
-
-    console.log("Updated dimArr: " + dimArr)
-  };
-
-  return dimArr;
-};
-
-// console.log(dim( 2,2,2,0 ));
-console.log(dim( 3,3,"x" ));
-// console.log(dim( 3, true ));
-
-// var xxx=function(){ return "xX" }
-// console.log(dim( 2,5,xxx ));
-
-// var rnd=function(){ return (~~Math.random()*3) }
-// console.log(dim( 3,2,rnd ));
+  return res;
+}
