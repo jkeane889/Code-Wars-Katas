@@ -1,97 +1,74 @@
 /*
+    In this kata, you will be given a string of text and valid parentheses, such as "h(el)lo". You must return the string, with only the text inside parentheses reversed, so "h(el)lo" becomes "h(le)lo". However, if said parenthesized text contains parenthesized text itself, then that too must reversed back, so it faces the original direction (parentheses included). Text like "h((el))l)o" becomes "'h(l(el))o'". This pattern should repeat for however many layers of parentheses.
 
-In this kata, you will be given a string of text and valid parentheses, such as "h(el)lo". You must return the string, with only the text inside parentheses reversed, so "h(el)lo" becomes "h(le)lo". However, if said parenthesized text contains parenthesized text itself, then that too must reversed back, so it faces the original direction (parentheses included). Text like "h((el))l)o" becomes "'h(l(el))o'". This pattern should repeat for however many layers of parentheses.
+    For example:
 
-For example:
-
-reverseInParens("h(el)lo") == "h(le)lo");
-reverseInParens("a ((d e) c b)") == "a (b c (d e))");
-reverseInParens("one (two (three) four)") == "one (ruof (three) owt)");
-reverseInParens("one (ruof ((rht)ee) owt)") == "one (two ((thr)ee) four)");
-Input parentheses will always be valid (i.e. you will never get "(()").
-
+    reverseInParens("h(el)lo") == "h(le)lo");
+    reverseInParens("a ((d e) c b)") == "a (b c (d e))");
+    reverseInParens("one (two (three) four)") == "one (ruof (three) owt)");
+    reverseInParens("one (ruof ((rht)ee) owt)") == "one (two ((thr)ee) four)");
+    Input parentheses will always be valid (i.e. you will never get "(()").
 */
+function reverseInParens(text) {
+    // Input - string of text that contains parantheses
+    // Output - reversed text inside of parantheses
+    // Constraints - n/a
+    // Edge Cases - n/a
+    // create global reverse string
 
-const reverseInParens = (text) => {
-    // Input - string of text that may or may not include parantheses
-    // Output - depending on placement of paratheses in text, reversed elements between parentheses
-    // Contraints - n/a 
-    // Edge cases: given a string without parantheses, returning given string
+    let reversedString = '';
 
-    // iterate over input text
-    //  if character equals '('
-    //    string += call reverseStack function and pass in string sliced from '('
-    //  else
-    //    string += char
-   
+    const reverseWitStack = (input, direction) => {
+      let stack = [];
 
-    //  let reversed = true
-    //  let global Stack = [];
-    //  
-    //  function reverseStack(string, stack)
-    //   if stack.length === 1
-    //      if reversed === true
-    //          return string.split('').reverse().join();
-    //      else
-    //          return string
-    //   else
-    //      if reversed === true 
-    //        push character onto stack
-    //         if character equals '('
-    //          reversed = false;
-    //          reverseStack(string.sliced '(', newStack)
-    
-    let reversedText = '';
+      for (let i = 0; i < input.length; i++) {
+        if (input[i] === '(') {
+          stack.push(input[i]);
+          if (direction === true) {
+            direction = false;
+          } else {
+            direction = true;
+          };
 
-    const reverseString = (input) => {
-        for (let i = 0; i < input.length; i++) {
-            if (input[i] === '(') {
-                reversedText += reverseStack(input.slice(i)); 
+          let j = input.length - 1;
+          while (j > 0) {
+            if (input[j] === ')') {
+              stack.push(reverseWitStack(input.slice(i + 1, j), direction))
+              stack.push(input[j]);
+              if (direction === true) {
+                direction = false;
+              } else {
+                direction = true;
+              };
+              i = j;
+              break;
             } else {
-                reversedText += input[i];
-            };
-        };
-    };
-
-    reverseString(text);
-
-    let reversed;
-    let globalStack = [];
-    let stackText = '';
-
-    const reverseStack = (string, stack) => {
-        if (stack.length === 1) {
-            if (reversed === true) {
-                return string.split('').reverse().join('');
-            } else {
-                return string
+              j--;
             }
+          }
         } else {
-            reversed = true;
-            for (let j = 0; j < string.length; j++) {
-                if (string[j] === '(') {
-                    reversed = false;
-                    globalStack.push(reverseStack(string.slice(j))); 
-                } else {
-                    globalStack.push(string[j]); 
-                }
-            }
+          stack.push(input[i]);
         }
+      }
 
-        while (globalStack.length) {
-            stackText += globalStack.pop();
+      let tempString = '';
+
+      while (stack.length) {
+        if (direction === true) {
+          tempString += stack.shift(); 
+        } else {
+          let char = stack.pop();
+          if (char === ')') {
+            char = '(';
+          } else if (char === '(') {
+            char = ')';
+          }
+          tempString += char;
         }
+      }
 
-        return stackText;
+      return tempString;
     };
-
-    return reversedText;
-}
-
-console.log(reverseInParens("h(el)lo"));
-// console.log(reverseInParens("a ((d e) c b)"));
-// console.log(reverseInParens("one (two (three) four)"));
-// console.log(reverseInParens("one (ruof ((rht)ee) owt)"));
-
-
-
+    
+    return reverseWitStack(text, true);
+};
